@@ -1,2 +1,2 @@
-# Koa-TypeScript-Boilerplate
-Boilerplate for Koa.js Server using TypeScript
+# GSM Pay API
+Backend Server for GSM Pay

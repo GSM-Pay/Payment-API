@@ -1,26 +1,26 @@
 version: '3.1'
 services:
   mariadb:
-    container_name: "db"
-    image: your-own-db
+    container_name: "payment_db"
+    image: mysql
     ports:
-      - "your-db-port"
+      - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: pw
-      MYSQL_USER: id
-      MYSQL_PASSWORD: pw
-      MYSQL_DATABASE: db
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: payment
+      MYSQL_PASSWORD: payment
+      MYSQL_DATABASE: payment
     restart: on-failure
   redis:
-    container_name: "session_store"
+    container_name: "payment_session_store"
     image: redis
     ports:
       - "6379:6379"
   server:
     depends_on:
-      - your-own-db
+      - mysql
       - redis
-    container_name: "server"
+    container_name: "payment_server"
     build: .
     ports:
       - "5000:5000"
@@ -36,4 +36,4 @@ services:
     restart: on-failure
     links:
       - redis
-      - your-own-db
+      - mysql

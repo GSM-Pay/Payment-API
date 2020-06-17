@@ -1,8 +1,8 @@
 {
-  "name": "koa-typescript-boilerplate",
-  "description": "Boilerplate for Koa.js Server using TypeScript",
+  "name": "payment-api",
+  "description": "Backend Server for GSM Pay",
   "version": "1.0.0",
-  "main": "dist/loader.js",
+  "main": "dist/deploy.js",
   "dependencies": {
     "cross-env": "^6.0.3",
     "dotenv": "^8.2.0",
@@ -23,7 +23,6 @@
     "typescript": "^3.7.2"
   },
   "scripts": {
-
     "start": "yarn build || cross-env NODE_ENV=production yarn fast-start",
     "fast-start": "cross-env NODE_ENV=deploy NODE_PATH=./dist node dist/deploy.js",
     "style-test": "standardx \"src/**/*.ts\" && tsc",
@@ -36,12 +35,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/startergate/Koa-TypeScript-Boilerplate.git"
+    "url": "git+https://github.com/GSM-Pay/Payment-API.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/startergate/Koa-TypeScript-Boilerplate/issues"
+    "url": "https://github.com/GSM-Pay/Payment-API/issues"
   },
-  "homepage": "https://github.com/startergate/Koa-TypeScript-Boilerplate#readme"
+  "homepage": "https://github.com/GSM-Pay/Payment-API#readme"
 }
