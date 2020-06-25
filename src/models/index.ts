@@ -11,4 +11,6 @@ const booth = BoothFactory(sequelize);
 const transaction = TransactionFactory(sequelize);
 const user = UserFactory(sequelize);
 
+sequelize.sync();
+
 export { sequelize, booth, transaction, user, Sequelize };
