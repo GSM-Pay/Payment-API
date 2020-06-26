@@ -13,7 +13,7 @@ type BoothStatic = typeof Model & {
 };
 
 export const BoothFactory = (sequelize: Sequelize) => {
-  const user = <BoothStatic>sequelize.define('Booth', {
+  const booth = <BoothStatic>sequelize.define('Booth', {
     bid: {
       type: DataTypes.BIGINT.UNSIGNED,
       autoIncrement: true,
@@ -26,9 +26,9 @@ export const BoothFactory = (sequelize: Sequelize) => {
       allowNull: false
     }
   });
-  user.hasMany(transaction, {
+  booth.hasMany(transaction, {
     as: 'Transactions',
     foreignKey: 'bid'
   })
-  return user;
+  return booth;
 };
