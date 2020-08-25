@@ -58,13 +58,5 @@ export const UserFactory = (sequelize: Sequelize) => {
       defaultValue: 0
     }
   });
-  user.hasMany(transaction, {
-    as: 'Transactions',
-    foreignKey: 'pid'
-  });
-  user.hasOne(booth, {
-    as: 'Owner',
-    foreignKey: 'pid'
-  })
   return user;
 };

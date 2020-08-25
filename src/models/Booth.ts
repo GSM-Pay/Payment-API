@@ -26,9 +26,5 @@ export const BoothFactory = (sequelize: Sequelize) => {
       allowNull: false
     }
   });
-  booth.hasMany(transaction, {
-    as: 'Transactions',
-    foreignKey: 'bid'
-  })
   return booth;
 };
