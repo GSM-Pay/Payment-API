@@ -10,8 +10,8 @@ const userType = gql`
         class: Int
         number: Int
         amount: Int
-        created_at: String
-        updated_at: String
+        createdAt: String
+        updatedAt: String
     }
 `
 
