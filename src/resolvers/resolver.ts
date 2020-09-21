@@ -1,5 +1,5 @@
-import { IResolvers } from "apollo-server-koa";
-import { transaction } from "../models";
+import { IResolvers } from 'apollo-server-koa';
+import { transaction } from '../models';
 
 import * as crypto from 'crypto';
 
