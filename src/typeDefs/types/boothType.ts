@@ -5,8 +5,8 @@ const boothType = gql`
         bid: Int
         pid: Int
         name: String
-        created_at: String
-        updated_at: String
+        createdAt: String
+        updatedAt: String
     }
 `
 

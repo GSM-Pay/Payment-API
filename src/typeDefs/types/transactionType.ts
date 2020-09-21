@@ -6,7 +6,7 @@ const transactionType = gql`
         bid: Int
         pid: Int
         amount: Int
-        created_at: String
+        createdAt: String
     }
 `
 
