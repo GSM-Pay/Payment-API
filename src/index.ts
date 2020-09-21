@@ -17,6 +17,5 @@ const server = new ApolloServer({
 server.applyMiddleware({ app });
 
 app.use(bodyParser());
-app.use(router.routes()).use(router.allowedMethods());
 
 export default app;
