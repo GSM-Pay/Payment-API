@@ -14,8 +14,9 @@ const client = redis.createClient({
 
 const resolver: IResolvers = {
     Query: {
-        // TO-DO: context 파라미터에서 인증 여부 검증
-        transactionsInBooth: async (_, { bid }, ctx) => {
+        transactionsInBooth: async (_, { bid }, { ctx }) => {
+            if (!ctx.user) return null;
+
             const transactions = await transaction.findAll({
                 where: {
                     bid: bid
@@ -24,13 +25,14 @@ const resolver: IResolvers = {
 
             return transactions;
         },
-        transactionsInUser: async (_, __, ctx) => {
-            // TO-DO: context 파라미터에서 인증된 유저의 PK 불러오기
-            const mockPid = 0;
+        transactionsInUser: async (_, __, { ctx }) => {
+            if (!ctx.user) return null;
+
+            const user = ctx.user;
 
             const transcations = await transaction.findAll({
                 where: {
-                    pid: mockPid
+                    pid: user.pid,
                 }
             });
 
