@@ -6,6 +6,8 @@ import { ApolloServer } from 'apollo-server-koa';
 import { typeDefs } from './typeDefs';
 import { resolvers } from './resolvers';
 
+import sessionCreator from './middlewares/session';
+
 const app = new Koa();
 
 const server = new ApolloServer({
@@ -14,8 +16,9 @@ const server = new ApolloServer({
 	context: ({ctx}) => ({ctx})
 });
 
-server.applyMiddleware({ app });
-
 app.use(bodyParser());
+app.use(sessionCreator);
+
+server.applyMiddleware({ app });
 
 export default app;

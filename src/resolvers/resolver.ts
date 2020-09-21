@@ -1,3 +1,6 @@
+import { IResolvers } from 'apollo-server-koa';
+import { transaction } from '../models';
+
 import * as crypto from 'crypto';
 
 import * as redis from 'redis';
@@ -9,9 +12,32 @@ const client = redis.createClient({
     host: process.env.REDIS_HOST
 });
 
-const resolver = {
+const resolver: IResolvers = {
     Query: {
+        transactionsInBooth: async (_, { bid }, { ctx }) => {
+            if (!ctx.user) return null;
 
+            const transactions = await transaction.findAll({
+                where: {
+                    bid: bid
+                }
+            });
+
+            return transactions;
+        },
+        transactionsInUser: async (_, __, { ctx }) => {
+            if (!ctx.user) return null;
+
+            const user = ctx.user;
+
+            const transcations = await transaction.findAll({
+                where: {
+                    pid: user.pid,
+                }
+            });
+
+            return transcations;
+        }
     },
     Mutation: {
         Login: async (_: any, {id, pw}: any, { ctx }: any) => {
