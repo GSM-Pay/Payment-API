@@ -5,6 +5,7 @@ import * as redis from 'redis';
 import * as uuid from 'uuid';
 
 import { transaction, user } from '../models';
+import * as sequelize from 'sequelize';
 
 const client = redis.createClient({
   host: process.env.REDIS_HOST
@@ -47,7 +48,7 @@ const resolver: IResolvers = {
                 amount: amount
             });
 
-            const updatedUser = await user.update({ amount: amount }, { where: { pid: pid } });
+            const updatedUser = await user.update({ amount: sequelize.literal(`amount + ${amount}`) }, { where: { pid: pid } });
             if (!updatedUser.length) return null;
             return createdTransaction;
         },
