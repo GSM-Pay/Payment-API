@@ -1,15 +1,14 @@
-import { IResolvers } from 'apollo-server-koa';
-import { transaction } from '../models';
-
 import * as crypto from 'crypto';
 
+import { IResolvers } from 'apollo-server-koa';
 import * as redis from 'redis';
 import * as uuid from 'uuid';
 
-import { user } from '../models';
+import { transaction, user } from '../models';
+import * as sequelize from 'sequelize';
 
 const client = redis.createClient({
-    host: process.env.REDIS_HOST
+  host: process.env.REDIS_HOST
 });
 
 const resolver: IResolvers = {
@@ -40,6 +39,19 @@ const resolver: IResolvers = {
         }
     },
     Mutation: {
+        createTransaction: async (_: any, { bid, amount }: any, { ctx }) => {
+            const pid = ctx.user.pid;
+
+            const createdTransaction = await transaction.create({
+                bid: bid,
+                pid: pid,
+                amount: amount
+            });
+
+            const updatedUser = await user.update({ amount: sequelize.literal(`amount + ${amount}`) }, { where: { pid: pid } });
+            if (!updatedUser.length) return null;
+            return createdTransaction;
+        },
         Login: async (_: any, {id, pw}: any, { ctx }: any) => {
             const hash = crypto.createHash('sha512');
             hash.update(pw);
