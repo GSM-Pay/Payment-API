@@ -21,6 +21,7 @@ services:
       - mysql
       - redis
     container_name: "payment_server"
+    image: startergate/gsm-pay
     build: .
     ports:
       - "5000:5000"
