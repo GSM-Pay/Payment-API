@@ -1,8 +1,8 @@
 import { query } from './query';
 import { mutation } from './mutation';
-import { userType, boothType, transactionType } from './types';
+import { userType, boothType, transactionType, sessionType } from './types';
 
-const typeDefs = [query, mutation, userType, boothType, transactionType];
+const typeDefs = [query, mutation, userType, boothType, transactionType, sessionType];
 
 export {
     typeDefs,
