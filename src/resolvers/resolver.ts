@@ -42,7 +42,7 @@ const resolver: IResolvers = {
         refund: async(_:any, { tid }: any, { ctx }) => {
             if (!ctx.user) return null
 
-            const user = transaction.findOne({ where: {
+            const user = await transaction.findOne({ where: {
                 pid:ctx.user.pid,
                 tid:tid
             }})
@@ -53,7 +53,7 @@ const resolver: IResolvers = {
             }
             })
 
-            return (await user).tid
+            return user
         },
         createTransaction: async (_: any, { bid, amount }: any, { ctx }) => {
             const pid = ctx.user.pid;
