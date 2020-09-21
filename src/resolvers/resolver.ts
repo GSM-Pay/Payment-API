@@ -14,23 +14,21 @@ const resolver = {
 
     },
     Mutation: {
-        Login: async (_: any, {id, pw}: any, ctx: any) => {
-            const data = ctx.request.body;
+        Login: async (_: any, {id, pw}: any, { ctx }: any) => {
             const hash = crypto.createHash('sha512');
-            hash.update(data.pw);
-            data.pw = hash.digest('hex');
+            hash.update(pw);
+            pw = hash.digest('hex');
 
-            const result = await user.findOne({ where: data, attributes: ['pid'] });
-
-            ctx.assert(result, 400);
+            const result = await user.findOne({ where: { id: id, pw: pw }, attributes: ['pid'] });
+            if (!result) return {data: null}
 
             const session = uuid.v4();
 
             if (!(await client.set(session, result.pid.toString()))) {
-                ctx.throw(500);
+                return {data: null}
             }
 
-            return {data: session}
+            return { data: session }
         }
     }
 };
