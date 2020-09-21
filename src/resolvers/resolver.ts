@@ -9,9 +9,33 @@ import { transaction, user } from '../models';
 const client = redis.createClient({
   host: process.env.REDIS_HOST
 });
+
 const resolver: IResolvers = {
     Query: {
+        transactionsInBooth: async (_, { bid }, { ctx }) => {
+            if (!ctx.user) return null;
 
+            const transactions = await transaction.findAll({
+                where: {
+                    bid: bid
+                }
+            });
+
+            return transactions;
+        },
+        transactionsInUser: async (_, __, { ctx }) => {
+            if (!ctx.user) return null;
+
+            const user = ctx.user;
+
+            const transcations = await transaction.findAll({
+                where: {
+                    pid: user.pid,
+                }
+            });
+
+            return transcations;
+        }
     },
     Mutation: {
         createTransaction: async (_: any, { bid, amount }: any, { ctx }) => {
