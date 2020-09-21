@@ -6,8 +6,6 @@ import { ApolloServer } from 'apollo-server-koa';
 import { typeDefs } from './typeDefs';
 import { resolvers } from './resolvers';
 
-import router from './router';
-
 const app = new Koa();
 
 const server = new ApolloServer({
