@@ -40,23 +40,20 @@ const resolver: IResolvers = {
     },
     Mutation: {
         refund: async(_:any, { tid }: any, { ctx }) => {
+            if (!ctx.user) return null
+
             const user = transaction.findOne({ where: {
                 pid:ctx.user.pid,
                 tid:tid
             }})
             if (!user) return null
 
-            const destroyId = await transaction.findOne({ where: {
-                tid:tid
-            }
-                
-            })
             await transaction.destroy({ where: {
                 tid : tid
             }
             })
 
-            return destroyId
+            return (await user).tid
         },
         createTransaction: async (_: any, { bid, amount }: any, { ctx }) => {
             const pid = ctx.user.pid;
