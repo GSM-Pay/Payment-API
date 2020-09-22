@@ -21,6 +21,7 @@ services:
       - mysql
       - redis
     container_name: "payment_server"
+    image: startergate/gsm-pay
     build: .
     ports:
       - "5000:5000"
@@ -31,6 +32,7 @@ services:
       DATABASE_HOST: mysql
       DATABASE_ID: payment
       DATABASE_PW: payment
+      DATABASE_DIALECT: mysql
 
       REDIS_HOST: redis
     restart: on-failure

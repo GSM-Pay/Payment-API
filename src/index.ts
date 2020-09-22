@@ -1,6 +1,6 @@
 // import Koa.js related package
-import * as Koa from 'koa';
-import * as bodyParser from 'koa-bodyparser';
+import Koa from 'koa';
+import bodyParser from 'koa-bodyparser';
 
 import { ApolloServer } from 'apollo-server-koa';
 import { typeDefs } from './typeDefs';
