@@ -10,8 +10,8 @@ export interface UserAttribute extends Model {
   readonly class: number;
   readonly number: number;
   readonly amount: number;
-  readonly created_at?: Date;
-  readonly updated_at?: Date;
+  readonly createdAt?: Date;
+  readonly updatedAt?: Date;
 }
 
 type UserStatic = typeof Model & {

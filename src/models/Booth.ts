@@ -4,8 +4,8 @@ import { transaction } from './index';
 export interface BoothAttribute extends Model {
   readonly bid: bigint;
   readonly name: string;
-  readonly created_at?: Date;
-  readonly updated_at?: Date;
+  readonly createdAt?: Date;
+  readonly updatedAt?: Date;
 }
 
 type BoothStatic = typeof Model & {

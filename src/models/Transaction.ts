@@ -2,8 +2,11 @@ import { Sequelize, DataTypes, Model, BuildOptions } from 'sequelize';
 
 interface TransactionAttribute extends Model {
   readonly tid: bigint;
+  readonly pid: bigint;
+  readonly bid: bigint;
   readonly amount: number;
-  readonly created_at?: Date;
+  readonly createdAt?: Date;
+  readonly updatedAt?: Date;
 }
 
 type TransactionStatic = typeof Model & {
