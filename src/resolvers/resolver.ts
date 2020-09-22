@@ -39,12 +39,50 @@ const resolver: IResolvers = {
 
             return booths;
         },
+        myBooths: async (_, __, { ctx }) => {
+            if (!ctx.user) return null;
+
+            const booths = await booth.findAll({
+                where: {
+                    pid: ctx.user.pid,
+                }
+            });
+
+            return booths;
+        },
         transactions: async (_, __, { ctx }) => {
             if (!ctx.user) return null;
 
             const transactions = await transaction.findAll();
 
-            return transactions;
+            const result = await Promise.all(
+                transactions.map(async (value, index) => {
+                    let _user = await user.findOne({
+                        where: {
+                            pid: parseInt(value.pid.toString())
+                        }
+                    });
+    
+                    let _booth = await booth.findOne({
+                        where: {
+                            bid: parseInt(value.bid.toString()),
+                        },
+                    });
+    
+                    let transaction = {
+                        tid: value.tid,
+                        user: _user,
+                        booth: _booth,
+                        amount: value.amount,
+                        createdAt: value.createdAt,
+                        updatedAt: value.updatedAt,
+                    }
+    
+                    return transaction;
+                }),
+            );
+
+            return result;
         },
         transactionsInBooth: async (_, { bid }, { ctx }) => {
             if (!ctx.user) return null;
@@ -76,8 +114,7 @@ const resolver: IResolvers = {
             if (!ctx.user) return null
 
             const user = await transaction.findOne({ where: {
-                pid:ctx.user.pid,
-                tid:tid
+                tid: tid
             }})
             if (!user) return null
 
@@ -91,13 +128,25 @@ const resolver: IResolvers = {
         createTransaction: async (_: any, { bid, amount }: any, { ctx }) => {
             const pid = ctx.user.pid;
 
-            const createdTransaction = await transaction.create({
-                bid: bid,
-                pid: pid,
-                amount: amount
+            let _user = await user.findOne({
+                where: {
+                    pid: parseInt(ctx.user.pid.toString())
+                }
             });
 
-            const updatedUser = await user.update({ amount: sequelize.literal(`amount + ${amount}`) }, { where: { pid: pid } });
+            let _booth = await booth.findOne({
+                where: {
+                    bid: parseInt(bid.toString()),
+                },
+            });
+            
+            const createdTransaction = await transaction.create({
+                booth: _booth,
+                user: _user,
+                amount: -amount
+            });
+
+            const updatedUser = await user.update({ amount: sequelize.literal(`amount - ${amount}`) }, { where: { pid: pid } });
             if (!updatedUser.length) return null;
             return createdTransaction;
         },

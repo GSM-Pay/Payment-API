@@ -6,6 +6,7 @@ const query = gql`
         users: [User]
         booth(bid: Int!): Booth
         booths: [Booth]
+        myBooths: [Booth]
         transactionsInBooth(bid: Int): [Transaction]
         transactionsInUser: [Transaction]
         transactions: [Transaction]
