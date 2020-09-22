@@ -32,6 +32,7 @@ services:
       DATABASE_HOST: mysql
       DATABASE_ID: payment
       DATABASE_PW: payment
+      DATABASE_DIALECT: mysql
 
       REDIS_HOST: redis
     restart: on-failure
