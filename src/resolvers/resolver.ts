@@ -4,7 +4,7 @@ import { IResolvers } from 'apollo-server-koa';
 import * as redis from 'redis';
 import * as uuid from 'uuid';
 
-import { transaction, user } from '../models';
+import { transaction, user, booth } from '../models';
 import * as sequelize from 'sequelize';
 
 const client = redis.createClient({
@@ -13,6 +13,39 @@ const client = redis.createClient({
 
 const resolver: IResolvers = {
     Query: {
+        me: async (_, __, { ctx }) => ctx.user,
+        users: async (_, __, { ctx }) => {
+            if (!ctx.user) return null;
+
+            const users = await user.findAll();
+
+            return users;
+        },
+        booth: async (_, { bid }, { ctx }) => {
+            if (!ctx.user) return null;
+
+            const _booth = await booth.findOne({
+                where: {
+                    bid: bid,
+                },
+            });
+
+            return _booth;
+        },
+        booths: async (_, __, { ctx }) => {
+            if (!ctx.user) return null;
+
+            const booths = await booth.findAll();
+
+            return booths;
+        },
+        transactions: async (_, __, { ctx }) => {
+            if (!ctx.user) return null;
+
+            const transactions = await transaction.findAll();
+
+            return transactions;
+        },
         transactionsInBooth: async (_, { bid }, { ctx }) => {
             if (!ctx.user) return null;
 
@@ -29,13 +62,13 @@ const resolver: IResolvers = {
 
             const user = ctx.user;
 
-            const transcations = await transaction.findAll({
+            const transactions = await transaction.findAll({
                 where: {
                     pid: user.pid,
                 }
             });
 
-            return transcations;
+            return transactions;
         }
     },
     Mutation: {
