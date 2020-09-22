@@ -6,8 +6,6 @@ import * as uuid from 'uuid';
 
 import { transaction, user, booth } from '../models';
 import * as sequelize from 'sequelize';
-import { BoothAttribute } from '../models/Booth';
-import { UserAttribute } from '../models/User';
 
 const client = redis.createClient({
   host: process.env.REDIS_HOST
@@ -116,8 +114,7 @@ const resolver: IResolvers = {
             if (!ctx.user) return null
 
             const user = await transaction.findOne({ where: {
-                pid:ctx.user.pid,
-                tid:tid
+                tid: tid
             }})
             if (!user) return null
 
@@ -131,13 +128,25 @@ const resolver: IResolvers = {
         createTransaction: async (_: any, { bid, amount }: any, { ctx }) => {
             const pid = ctx.user.pid;
 
-            const createdTransaction = await transaction.create({
-                bid: bid,
-                pid: pid,
-                amount: amount
+            let _user = await user.findOne({
+                where: {
+                    pid: parseInt(ctx.user.pid.toString())
+                }
             });
 
-            const updatedUser = await user.update({ amount: sequelize.literal(`amount + ${amount}`) }, { where: { pid: pid } });
+            let _booth = await booth.findOne({
+                where: {
+                    bid: parseInt(bid.toString()),
+                },
+            });
+            
+            const createdTransaction = await transaction.create({
+                booth: _booth,
+                user: _user,
+                amount: -amount
+            });
+
+            const updatedUser = await user.update({ amount: sequelize.literal(`amount - ${amount}`) }, { where: { pid: pid } });
             if (!updatedUser.length) return null;
             return createdTransaction;
         },
