@@ -183,21 +183,9 @@ const resolver: IResolvers = {
         createTransaction: async (_: any, { bid, amount }: any, { ctx }) => {
             const pid = ctx.user.pid;
 
-            let _user = await user.findOne({
-                where: {
-                    pid: ctx.user.pid,
-                }
-            });
-
-            let _booth = await booth.findOne({
-                where: {
-                    bid: bid,
-                },
-            });
-            
             const createdTransaction = await transaction.create({
-                booth: _booth,
-                user: _user,
+                bid: bid,
+                pid: ctx.user.pid,
                 amount: -amount
             });
 
