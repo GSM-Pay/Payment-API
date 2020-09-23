@@ -126,17 +126,15 @@ const resolver: IResolvers = {
         transactionsInUser: async (_, __, { ctx }) => {
             if (!ctx.user) return null;
 
-            const user = ctx.user;
-
             const transactions = await transaction.findAll({
                 where: {
-                    pid: user.pid,
+                    pid: ctx.user.pid,
                 }
             });
 
             const _user = await user.findOne({
                 where: {
-                    pid: user.pid,
+                    pid: ctx.user.pid,
                 }
             });
 
