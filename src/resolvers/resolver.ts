@@ -93,7 +93,6 @@ const resolver: IResolvers = {
                 }
             });
 
-
             const _booth = await booth.findOne({
                 where: {
                     bid: bid,
@@ -104,8 +103,8 @@ const resolver: IResolvers = {
                 transactions.map(async (value, index) => {
                     let _user = await user.findOne({
                         where: {
-                            pid: parseInt(value.pid.toString())
-                        }
+                            pid: parseInt(value.pid.toString()),
+                        },
                     });
     
                     let transaction = {
@@ -163,22 +162,59 @@ const resolver: IResolvers = {
         }
     },
     Mutation: {
-        refund: async(_:any, { tid }: any, { ctx }) => {
-            if (!ctx.user) return null
+        refund: async (_, { tid }, { ctx }) => {
+            if (!ctx.user) return null;
 
-            const user = await transaction.findOne({ where: {
-                tid: tid
-            }})
-            if (!user) return null
+            const found = await transaction.findOne({
+                where: {
+                    tid: tid
+                },
+            });
 
-            await transaction.destroy({ where: {
-                tid : tid
-            }
-            })
+            if (!found) return null;
 
-            return user
+            await transaction.destroy({
+                where: {
+                    tid: tid,
+                },
+            });
+
+            const pid = parseInt(found.pid.toString());
+
+            const updated = await user.update(
+                {
+                    amount: sequelize.literal(`amount - ${found.amount}`)
+                },
+                {
+                    where: {
+                        pid: pid,
+                    }
+                });
+
+            if (!updated.length) return null;
+
+            const _user = await user.findOne({
+                where: {
+                    pid: ctx.user.pid,
+                }
+            });
+
+            const _booth = await booth.findOne({
+                where: {
+                    bid: parseInt(found.bid.toString()),
+                },
+            });
+
+            return {
+                tid: found.tid,
+                user: _user,
+                booth: _booth,
+                amount: found.amount,
+                createdAt: found.createdAt,
+                updatedAt: found.updatedAt,
+            };
         },
-        createTransaction: async (_: any, { bid, amount }: any, { ctx }) => {
+        createTransaction: async (_, { bid, amount }, { ctx }) => {
             const pid = ctx.user.pid;
 
             const createdTransaction = await transaction.create({
@@ -188,13 +224,42 @@ const resolver: IResolvers = {
             });
 
             const updatedUser = await user.update({ amount: sequelize.literal(`amount - ${amount}`) }, { where: { pid: pid } });
+
             if (!updatedUser.length) return null;
-            return createdTransaction;
+
+            const _user = await user.findOne({
+                where: {
+                    pid: ctx.user.pid,
+                }
+            });
+
+            const _booth = await booth.findOne({
+                where: {
+                    bid: bid,
+                },
+            });
+
+            return {
+                tid: createdTransaction.tid,
+                user: _user,
+                booth: _booth,
+                amount: createdTransaction.amount,
+                createdAt: createdTransaction.createdAt,
+                updatedAt: createdTransaction.updatedAt,
+            };
         },
         addAmount: async (_, { pid, amount }, { ctx }) => {
-            if (!ctx.user) return null
+            if (!ctx.user) return null;
 
-            const updatedUser = await user.update({ amount: sequelize.literal(`amount + ${amount}`) }, { where: { pid: pid } });
+            const updatedUser = await user.update(
+                {
+                    amount: sequelize.literal(`amount + ${amount}`)
+                },
+                {
+                    where: {
+                        pid: pid,
+                    }
+                });
 
             if (!updatedUser.length) return null;
 
@@ -206,18 +271,19 @@ const resolver: IResolvers = {
 
             return _user;
         },
-        Login: async (_: any, {id, pw}: any, { ctx }: any) => {
+        Login: async (_, { id, pw }) => {
             const hash = crypto.createHash('sha512');
             hash.update(pw);
             pw = hash.digest('hex');
 
             const result = await user.findOne({ where: { id: id, pw: pw }, attributes: ['pid'] });
-            if (!result) return {data: null}
+
+            if (!result) return { data: null }
 
             const session = uuid.v4();
 
             if (!(await client.set(session, result.pid.toString()))) {
-                return {data: null}
+                return { data: null }
             }
 
             return { data: session }
