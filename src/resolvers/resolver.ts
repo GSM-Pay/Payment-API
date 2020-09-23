@@ -185,13 +185,13 @@ const resolver: IResolvers = {
 
             let _user = await user.findOne({
                 where: {
-                    pid: parseInt(ctx.user.pid.toString())
+                    pid: ctx.user.pid,
                 }
             });
 
             let _booth = await booth.findOne({
                 where: {
-                    bid: parseInt(bid.toString()),
+                    bid: bid,
                 },
             });
             
@@ -207,8 +207,6 @@ const resolver: IResolvers = {
         },
         addAmount: async (_, { pid, amount }, { ctx }) => {
             if (!ctx.user) return null
-
-            if (ctx.user.pid !== pid) return null
 
             const updatedUser = await user.update({ amount: sequelize.literal(`amount + ${amount}`) }, { where: { pid: pid } });
 
